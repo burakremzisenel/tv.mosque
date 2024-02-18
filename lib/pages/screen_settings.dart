@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/carbon.dart';
 import 'package:iconify_flutter/icons/icon_park_solid.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -103,6 +104,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const ApiSettingsScreen()),
+                          );
+                        },
+                      ),
+
+                      /// Show licenses
+                      SettingsTile.navigation(
+                        leading: const Iconify(Carbon.license_third_party, color: Colors.grey),
+                        title: const Text('Licence'),
+                        description: const Text('License information'),
+                        onPressed: (context){
+                          showLicensePage(
+                              context: context,
+                              applicationName: 'app_name'.tr(),
                           );
                         },
                       ),
