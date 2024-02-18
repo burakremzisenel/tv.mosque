@@ -1,4 +1,4 @@
-package de.islamische_gemeinde_spandau.tv
+package de.mosque.tv
 
 import io.flutter.embedding.android.FlutterActivity
 
