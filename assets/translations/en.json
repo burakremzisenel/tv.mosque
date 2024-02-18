@@ -1,0 +1,45 @@
+{
+  "app_name": "Prayer Times",
+
+  "pTimeEndsIn": "Prayer time ends in",
+
+  "prayerTime":{
+    "FAJR":"fajr",
+    "SHURUQ":"sunrise",
+    "DHUHR":"dhuhr",
+    "ASR":"asr",
+    "MAGHRIB":"maghrib",
+    "ISHAA":"ishaa",
+    "other":"ishaa"
+  },
+
+  "hijriMonth":{
+    "MUHARRAM":"Muharram",
+    "SAFAR":"Safar",
+    "RABI_AL_AWWAL":"Rabi al-Awwal",
+    "RABI_AL_THANI":"Rabi al-Thani",
+    "JUMADA_AL_AWWAL":"Jumada al-Awwal",
+    "JUMADA_AL_THANI":"Jumada al-Thani",
+    "RAJAB":"Rajab",
+    "SHABAN":"Shaban",
+    "RAMADAN":"Ramadan",
+    "SHAWWAL":"Shawwal",
+    "DHUL_QADAH":"Dhul Qadah",
+    "DHUL_HIJJAH":"Dhul Hijjah",
+    "other":"Dhul Hijjah"
+  },
+
+  "today_in_history": "Today in History",
+  "today_ayah_or_hadit": "Verse or Hadith of the Day",
+  "language": "Language",
+  "language_settings_subtitle": "Application Language, Change Interval, Translations...",
+  "main_settings": "Main Settings",
+  "announcements": "Announcements",
+  "slider_duration": "Duration of page change",
+  "slider_duration_desc": "Duration of time the current notification page is displayed before switching to the next notification. Min. 0s. (Closed)",
+  "language_timer_desc": "Language change interval. Min. 0s. (Closed)",
+  "api_endpoints": "API endpoints",
+  "slider_settings": "Slider Settings",
+  "layout_horizontal": "Horizontal Layout",
+  "vertical_horizontal": "Vertical Layout"
+}

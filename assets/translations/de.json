@@ -1,0 +1,45 @@
+{
+  "app_name": "Gebetszeiten",
+
+  "pTimeEndsIn": "Gebetszeit endet in",
+
+  "prayerTime":{
+    "FAJR":"Frühlicht",
+    "SHURUQ":"S'Aufgang",
+    "DHUHR":"Mittag",
+    "ASR":"Nachmittag",
+    "MAGHRIB":"Abend",
+    "ISHAA":"Nacht",
+    "other":"Nacht"
+  },
+
+  "hijriMonth":{
+    "MUHARRAM":"Muharram",
+    "SAFAR":"Safar",
+    "RABI_AL_AWWAL":"Rabi-ul-Awwal",
+    "RABI_AL_THANI":"Rabi-ul-Achir",
+    "JUMADA_AL_AWWAL":"Dschumada al-Ula",
+    "JUMADA_AL_THANI":"Dschumada al-Uchra",
+    "RAJAB":"Radschab",
+    "SHABAN":"Scha'ban",
+    "RAMADAN":"Ramadan",
+    "SHAWWAL":"Shawwal",
+    "DHUL_QADAH":"Dhu-l-Qaʿda",
+    "DHUL_HIJJAH":"Dhu-l-Hiddscha",
+    "other":"Dhu-l-Hiddscha"
+  },
+
+  "today_in_history": "Heute in der Geschichte",
+  "today_ayah_or_hadit": "Vers oder Hadith des Tages",
+  "language": "Sprache",
+  "language_settings_subtitle": "Anwendungssprache, Wechselintervall, Übersetzungen...",
+  "main_settings": "Haupteinstellungen",
+  "announcements": "Ankündigungen",
+  "slider_duration": "Dauer des Seitenwechsels",
+  "slider_duration_desc": "Dauer, wie lange die aktuelle Benachrichtigungsseite angezeigt wird, bevor zur nächsten Benachrichtigung gewechselt wird.\nMin. 0s. (Ausgeschaltet)",
+  "language_timer_desc": "Sprachwechselintervall. Min. 0s. (Ausgeschaltet)",
+  "api_endpoints": "API Endpunkte",
+  "slider_settings": "Slider Einstellungen",
+  "layout_horizontal": "Horizontales Layout",
+  "vertical_horizontal": "Vertikales Layout"
+}

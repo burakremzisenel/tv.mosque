@@ -1,0 +1,46 @@
+{
+  "app_name": "Namaz Vakitleri",
+
+  "pTimeEndsIn": "Bir sonraki vakte kalan süre",
+
+  "prayerTime":{
+    "FAJR":"İmsak",
+    "SHURUQ":"Güneş",
+    "DHUHR":"Öğle",
+    "ASR":"İkindi",
+    "MAGHRIB":"Akşam",
+    "ISHAA":"Yatsı",
+    "other":"Yatsı"
+  },
+
+  "hijriMonth":{
+    "MUHARRAM":"Muharrem",
+    "SAFAR":"Safer",
+    "RABI_AL_AWWAL":"Rebî'ül-evvel",
+    "RABI_AL_THANI":"Rebî'ül-âhir",
+    "JUMADA_AL_AWWAL":"Cemâziyel evvel",
+    "JUMADA_AL_THANI":"Cemâziyel âhir",
+    "RAJAB":"Receb",
+    "SHABAN":"Şâban",
+    "RAMADAN":"Ramazan",
+    "SHAWWAL":"Şevval",
+    "DHUL_QADAH":"Zilka'de",
+    "DHUL_HIJJAH":"Zilhicce",
+    "other":"Zilhicce"
+  },
+
+  "today_in_history": "Tarihte Bugün",
+  "today_ayah_or_hadit": "Günün hadis yada ayeti",
+  "language": "Dil",
+  "language_settings_subtitle": "Uygulama Dili, Değişim Aralığı, Çeviriler...",
+  "main_settings": "Ana Ayarlar",
+  "announcements": "Bildirimler",
+  "slider_duration": "Sayfa degistirme süresi",
+  "slider_duration_desc": "Güncel bildirim sayfasinin bir sonraki bildirime gecilmeden önce ekranda ne kadar gösterilecegini belirleyen süre.\nMin. 0s.(Kapalı)",
+  "language_timer_desc": "Dil değişim aralığı. Min. 0s. (Kapalı)",
+  "api_endpoints": "API Son Noktaları",
+  "slider_settings": "Kaydırıcı Ayarları",
+  "layout_horizontal": "Yatay Düzen",
+  "vertical_horizontal": "Dikey Düzen"
+}
+

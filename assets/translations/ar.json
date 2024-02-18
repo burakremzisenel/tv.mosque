@@ -1,0 +1,45 @@
+{
+  "app_name": "أوقات الصلاة",
+
+  "pTimeEndsIn": "ينتهي وقت الصلاة بعد",
+
+  "prayerTime":{
+    "FAJR":"الفجْر",
+    "SHURUQ":"الشروق",
+    "DHUHR":"الظُّهْر",
+    "ASR":"العَصر",
+    "MAGHRIB":"المَغرب",
+    "ISHAA":"العِشاء",
+    "other":"العِشاء"
+  },
+
+  "hijriMonth":{
+    "MUHARRAM":"مُحَرَّم",
+    "SAFAR":"صَفَر",
+    "RABI_AL_AWWAL":"رَبِيْعُ الأَوّل",
+    "RABI_AL_THANI":"رَبِيْعُ الثَّانِي",
+    "JUMADA_AL_AWWAL":"جَمَادِي الأَوّل",
+    "JUMADA_AL_THANI":"جَمَادِي الثَّانِي",
+    "RAJAB":"رَجَب",
+    "SHABAN":"شَعْبَان",
+    "RAMADAN":"رَمَضَان",
+    "SHAWWAL":"شَوَّال",
+    "DHUL_QADAH":"ذُوالْقَعْدَة",
+    "DHUL_HIJJAH":"ذُوالْحِجَّة",
+    "other":"ذُوالْحِجَّة"
+  },
+
+  "today_in_history": "اليوم في التاريخ",
+  "today_ayah_or_hadit": "الآية أو الحديث لليوم",
+  "language": "لغة",
+  "language_settings_subtitle": "لغة التطبيق، فترة التغيير، الترجمات...",
+  "main_settings": "الإعدادات الرئيسية",
+  "announcements": "إعلانات",
+  "slider_duration": "مدة تغيير الصفحة",
+  "slider_duration_desc": "مدة الوقت التي يتم فيها عرض صفحة الإشعارات الحالية قبل التبديل إلى الإشعار التالي. الحد الأدنى 0 ثانية. (مغلق)",
+  "language_timer_desc": "فترة تغيير اللغة. الحد الأدنى 0 ثانية. (مغلق)",
+  "api_endpoints": "نقاط نهاية واجهة برمجة التطبيقات",
+  "slider_settings": "إعدادات المنزلق",
+  "layout_horizontal": "التخطيط الأفقي",
+  "vertical_horizontal": "التخطيط العمودي"
+}
