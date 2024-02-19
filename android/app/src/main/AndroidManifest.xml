@@ -2,7 +2,7 @@
     package="de.mosque.tv">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="Islamische Gemeinde Spandau"
+        android:label="TV Mosque"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
