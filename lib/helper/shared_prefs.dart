@@ -33,16 +33,19 @@ Future<bool> wasPrayerTimesFetchedToday() async{
 }
 
 enum BufferTypes{
-  prayerTimes,
-  hijriDate,
-  calInfo,
-  settings,
+  prayerTimes("PRY"),
+  hijriDate("HJR"),
+  calInfo("CAL"),
+  settings("SET");
+
+  final String buffer;
+  const BufferTypes(this.buffer);
 }
 Future saveToBuffer(BufferTypes key, value) async{
   final prefs = await SharedPreferences.getInstance();
-  prefs.setString(key.toString(), json.encode(value));
+  prefs.setString(key.buffer, json.encode(value));
 }
 Future readFromBuffer(BufferTypes key) async {
   final prefs = await SharedPreferences.getInstance();
-  return json.decode(prefs.getString(key.toString()) ??'{}');
+  return json.decode(prefs.getString(key.buffer) ??'{}');
 }

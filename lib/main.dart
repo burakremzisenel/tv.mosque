@@ -23,7 +23,7 @@ void main() async{
 
   /// Get settings from buffer
   final prefs = await SharedPreferences.getInstance();
-  prefs.clear();
+
   Settings settings = Settings.fromJson(await readFromBuffer(BufferTypes.settings));
 
   /// Update api settings in http service
