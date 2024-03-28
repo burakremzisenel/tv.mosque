@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tv_mosque/widgets/carousel_slider.dart';
 import 'package:tv_mosque/widgets/layout_top.dart';
 import 'package:tv_mosque/widgets/ptimes_list_cards.dart';
 import 'package:tv_mosque/widgets/ptimes_list_V.dart';
@@ -43,7 +44,7 @@ class LayoutHorizontalState extends State<LayoutHorizontal> {
                 /// Announcements
                 Expanded(
                   flex: 6,
-                  child: Carousel(),
+                  child: AnnoSlider(),
                 )
               ],
             ),

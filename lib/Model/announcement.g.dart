@@ -18,12 +18,14 @@ Announcement _$AnnouncementFromJson(Map<String, dynamic> json) => Announcement(
       publishedUntil: json['published_until'] == null
           ? null
           : DateTime.parse(json['published_until'] as String),
-      updatedAt: json['updated_at'] == null
+      updatedAt: json['date_updated'] == null
           ? null
-          : DateTime.parse(json['updated_at'] as String),
-      createdAt: json['createdAt'] == null
+          : DateTime.parse(json['date_updated'] as String),
+      createdAt: json['date_created'] == null
           ? null
-          : DateTime.parse(json['createdAt'] as String),
+          : DateTime.parse(json['date_created'] as String),
+      type: $enumDecodeNullable(_$AnnoTypesEnumMap, json['type']) ??
+          AnnoTypes.DIRECTUS,
     );
 
 Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>
@@ -35,6 +37,12 @@ Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>
       'image': instance.image,
       'published_from': instance.publishedFrom?.toIso8601String(),
       'published_until': instance.publishedUntil?.toIso8601String(),
-      'updated_at': instance.updatedAt?.toIso8601String(),
-      'createdAt': instance.createdAt?.toIso8601String(),
+      'date_updated': instance.updatedAt?.toIso8601String(),
+      'date_created': instance.createdAt?.toIso8601String(),
+      'type': _$AnnoTypesEnumMap[instance.type]!,
     };
+
+const _$AnnoTypesEnumMap = {
+  AnnoTypes.DIRECTUS: 'DIRECTUS',
+  AnnoTypes.IGMG: 'IGMG',
+};

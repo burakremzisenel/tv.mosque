@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,14 +36,16 @@ part 'http_igmg.dart';
 
 class HttpService{
   Settings? settings;
-
+  CacheOptions? cacheOptions;
+  HiveCacheStore? cacheStore;
   Dio? dio;
   CookieJar? cookieJar;
+
   HttpService._constructor(){
     dio = Dio(
         BaseOptions(
-            receiveTimeout: const Duration(seconds: 10), // 15 seconds
-            connectTimeout: const Duration(seconds: 15),
+            receiveTimeout: const Duration(seconds: 5),
+            connectTimeout: const Duration(seconds: 5),
             sendTimeout: const Duration(seconds: 15),
         )
     );
@@ -47,8 +54,31 @@ class HttpService{
       dio?.interceptors.add(CookieManager(cookieJar!));
     }
     dio?.httpClientAdapter = getAdapter();
-    dio?.interceptors.add(Logging());
   }
+
+  addInterceptors() async{
+    /// Cache
+    var cacheDir = await getTemporaryDirectory();
+    cacheStore = HiveCacheStore(
+      cacheDir.path,
+      hiveBoxName: "dio_cache",
+    );
+    cacheOptions = CacheOptions(
+      store: cacheStore,
+      policy: CachePolicy.refreshForceCache,
+      priority: CachePriority.high,
+      maxStale: const Duration(minutes: 5),
+      hitCacheOnErrorExcept: [401, 404],
+      keyBuilder: (request) {
+        return request.uri.toString();
+      },
+    );
+    dio?.interceptors.addAll([
+      Logging(),
+      DioCacheInterceptor(options: cacheOptions!),
+    ]);
+  }
+
   static HttpService? _singleton;
   factory HttpService() {
     _singleton ??= HttpService._constructor();

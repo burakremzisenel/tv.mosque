@@ -34,8 +34,8 @@ Future<bool> wasPrayerTimesFetchedToday() async{
 
 enum BufferTypes{
   prayerTimes("PRY"),
-  hijriDate("HJR"),
   calInfo("CAL"),
+  countries("CNT"),
   settings("SET");
 
   final String buffer;

@@ -1,6 +1,6 @@
 part of mosque;
 
-extension TranslatorOnline on MosqueScreenState{
+extension TranslatorOnline on MosquePageState{
 
   /// translates calendar info
   /// from original language turkish

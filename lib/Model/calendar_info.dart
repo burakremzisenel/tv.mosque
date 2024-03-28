@@ -74,5 +74,10 @@ class CalendarInfo with EquatableMixin{
   Map<String, dynamic> toJson() => _$CalendarInfoToJson(this);
 
   @override
-  List<Object?> get props => [eventTranslations, daysTopicTranslations, daysTopicTextTranslations, ayahTranslations];
+  List<Object?> get props => [
+    eventTranslations,
+    daysTopicTranslations,
+    daysTopicTextTranslations,
+    ayahTranslations
+  ];
 }

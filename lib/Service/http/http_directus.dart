@@ -2,20 +2,48 @@ part of 'http_service.dart';
 
 extension DirectusAPI on HttpService{
   /// Fetch Announcements from API.MOSQUE
-  ///
   Future<List<Announcement>> fetchAnnouncements() async {
     try {
-      //_singleton.dio.options.headers['X-API-KEY'] = API_KEY;
+      /// Cache Options
+      Options? options = cacheOptions?.copyWith(
+          policy: CachePolicy.noCache,
+      ).toOptions();
+      options?.headers =  {
+        "Authorization": "Bearer ${settings?.directusKey}",
+        "Content-Type": "application/json",
+      };
+      options?.responseType = ResponseType.json;
+
+      final now = DateTime.now().toIso8601String();
       Response? res = await dio?.get(
           '${settings?.directusApi}/items/feeds',
-          options: Options(
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer ${settings?.directusKey}",
-              },
-              responseType: ResponseType.json,
-              sendTimeout: const Duration(seconds: 5)
-          )
+          queryParameters: {
+            "query": jsonEncode({
+              "filter": {
+                "_or": [
+                  {
+                    "published_from": {"_null": true},
+                    "published_until": {"_null": true}
+                  },
+                  {
+                    "published_from": {"_notnull": true},
+                    "published_from": {"_lte": now},
+                    "published_until": {"_null": true}
+                  },
+                  {
+                    "published_from": {"_null": true},
+                    "published_until": {"_notnull": true},
+                    "published_until": {"_gte": now}
+                  },
+                  {
+                    "published_from": {"_lte": now},
+                    "published_until": {"_gte": now}
+                  }
+                ]
+              }
+            }),
+          },
+          options: options
       );
       List<Announcement> newsList = Announcement.listFromJson(res?.data['data']);
       return newsList;

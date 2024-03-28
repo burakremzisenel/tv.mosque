@@ -8,96 +8,139 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i5;
-import 'package:tv_mosque/pages/screen_mosque.dart' as _i2;
-import 'package:tv_mosque/pages/screen_settings.dart' as _i3;
-import 'package:tv_mosque/pages/screen_settings_language.dart' as _i1;
-import 'package:tv_mosque/pages/screen_settings_slider.dart' as _i4;
+import 'package:auto_route/auto_route.dart' as _i7;
+import 'package:tv_mosque/pages/screen_mosque.dart' as _i3;
+import 'package:tv_mosque/pages/screen_settings.dart' as _i5;
+import 'package:tv_mosque/pages/settings/screen_settings_api.dart' as _i1;
+import 'package:tv_mosque/pages/settings/screen_settings_language.dart' as _i2;
+import 'package:tv_mosque/pages/settings/screen_settings_prayer_times.dart'
+    as _i4;
+import 'package:tv_mosque/pages/settings/screen_settings_slider.dart' as _i6;
 
-abstract class $AppRouter extends _i5.RootStackRouter {
+abstract class $AppRouter extends _i7.RootStackRouter {
   $AppRouter({super.navigatorKey});
 
   @override
-  final Map<String, _i5.PageFactory> pagesMap = {
-    LanguageSettingsPage.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+  final Map<String, _i7.PageFactory> pagesMap = {
+    ApiSettingsRoute.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i1.LanguageSettingsScreen(),
+        child: const _i1.ApiSettingsPage(),
       );
     },
-    MosquePage.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+    LanguageSettingsRoute.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i5.WrappedRoute(child: const _i2.MosqueScreen()),
+        child: const _i2.LanguageSettingsPage(),
       );
     },
-    SettingsPage.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+    MosqueRoute.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i3.SettingsScreen(),
+        child: _i7.WrappedRoute(child: const _i3.MosquePage()),
       );
     },
-    SliderSettingsPage.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+    PrayerTimesSettingsRoute.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i4.SliderSettingsScreen(),
+        child: const _i4.PrayerTimesSettingsPage(),
+      );
+    },
+    SettingsRoute.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i5.SettingsPage(),
+      );
+    },
+    SliderSettingsRoute.name: (routeData) {
+      return _i7.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i6.SliderSettingsPage(),
       );
     },
   };
 }
 
 /// generated route for
-/// [_i1.LanguageSettingsScreen]
-class LanguageSettingsPage extends _i5.PageRouteInfo<void> {
-  const LanguageSettingsPage({List<_i5.PageRouteInfo>? children})
+/// [_i1.ApiSettingsPage]
+class ApiSettingsRoute extends _i7.PageRouteInfo<void> {
+  const ApiSettingsRoute({List<_i7.PageRouteInfo>? children})
       : super(
-          LanguageSettingsPage.name,
+          ApiSettingsRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'LanguageSettingsPage';
+  static const String name = 'ApiSettingsRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i2.MosqueScreen]
-class MosquePage extends _i5.PageRouteInfo<void> {
-  const MosquePage({List<_i5.PageRouteInfo>? children})
+/// [_i2.LanguageSettingsPage]
+class LanguageSettingsRoute extends _i7.PageRouteInfo<void> {
+  const LanguageSettingsRoute({List<_i7.PageRouteInfo>? children})
       : super(
-          MosquePage.name,
+          LanguageSettingsRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'MosquePage';
+  static const String name = 'LanguageSettingsRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i3.SettingsScreen]
-class SettingsPage extends _i5.PageRouteInfo<void> {
-  const SettingsPage({List<_i5.PageRouteInfo>? children})
+/// [_i3.MosquePage]
+class MosqueRoute extends _i7.PageRouteInfo<void> {
+  const MosqueRoute({List<_i7.PageRouteInfo>? children})
       : super(
-          SettingsPage.name,
+          MosqueRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'SettingsPage';
+  static const String name = 'MosqueRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i4.SliderSettingsScreen]
-class SliderSettingsPage extends _i5.PageRouteInfo<void> {
-  const SliderSettingsPage({List<_i5.PageRouteInfo>? children})
+/// [_i4.PrayerTimesSettingsPage]
+class PrayerTimesSettingsRoute extends _i7.PageRouteInfo<void> {
+  const PrayerTimesSettingsRoute({List<_i7.PageRouteInfo>? children})
       : super(
-          SliderSettingsPage.name,
+          PrayerTimesSettingsRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'SliderSettingsPage';
+  static const String name = 'PrayerTimesSettingsRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i5.SettingsPage]
+class SettingsRoute extends _i7.PageRouteInfo<void> {
+  const SettingsRoute({List<_i7.PageRouteInfo>? children})
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SettingsRoute';
+
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i6.SliderSettingsPage]
+class SliderSettingsRoute extends _i7.PageRouteInfo<void> {
+  const SliderSettingsRoute({List<_i7.PageRouteInfo>? children})
+      : super(
+          SliderSettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SliderSettingsRoute';
+
+  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
 }

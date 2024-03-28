@@ -12,6 +12,6 @@ TextStyle styleOfPTimeTitle(bool isCurrentTime) {
 TextStyle styleOfPTimeDuration(bool isCurrentTime) {
   return TextStyle(
       fontSize: 50,
-      color: isCurrentTime ? Colors.amber : Colors.white,
+      color: isCurrentTime ? Colors.white : Colors.white,
       fontWeight: isCurrentTime ? FontWeight.bold : FontWeight.normal);
 }

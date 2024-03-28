@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tv_mosque/Service/http/http_service.dart';
 import 'package:tv_mosque/router.dart';
 
@@ -21,13 +20,17 @@ void main() async{
   /// full screen
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-  /// Get settings from buffer
-  final prefs = await SharedPreferences.getInstance();
-
+  /// Read settings from buffer
   Settings settings = Settings.fromJson(await readFromBuffer(BufferTypes.settings));
+
+  /// Read locations list from assets
+  if(settings.countries.isEmpty){
+    await settings.readCountriesFromAssets();
+  }
 
   /// Update api settings in http service
   HttpService().settings = settings;
+  await HttpService().addInterceptors();
 
   runApp(
       EasyLocalization(
@@ -57,6 +60,7 @@ class MyApp extends StatelessWidget {
         LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
       },
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         onGenerateTitle: (BuildContext context) {
           return 'app_name'.tr();
         },

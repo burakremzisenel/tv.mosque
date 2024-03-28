@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -33,3 +34,8 @@ Future<MemoryImage> svgStrToMemoryimage(String svgString) async{
 }
 
  */
+
+String parseDateJM(DateTime dateTime){
+  final chunks = DateFormat.Hm().format(dateTime).split(':');
+  return '${chunks[0]}:${chunks[1]}';
+}

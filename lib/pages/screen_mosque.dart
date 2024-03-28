@@ -6,16 +6,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:translator/translator.dart';
 import 'package:tv_mosque/Logic/Provider/provider_settings.dart';
-import 'package:tv_mosque/router.gr.dart';
 import 'package:tv_mosque/widgets/layout_horizontal.dart';
 import 'package:tv_mosque/widgets/layout_vertical.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '../Model/calendar_info.dart';
-import '../Model/hijri_months.dart';
 import '../Model/prayer_times.dart';
 import '../Logic/Provider/provider_clock.dart';
 import 'dart:ui' as ui;
@@ -25,18 +25,17 @@ import '../Service/http/http_service.dart';
 part '../online_translator.dart';
 
 @RoutePage()
-class MosqueScreen extends StatefulWidget implements AutoRouteWrapper {
-  const MosqueScreen({super.key});
+class MosquePage extends StatefulWidget implements AutoRouteWrapper {
+  const MosquePage({super.key});
 
   @override
-  State<MosqueScreen> createState() => MosqueScreenState();
+  State<MosquePage> createState() => MosquePageState();
 
   @override
   Widget wrappedRoute(BuildContext context) {
     return ChangeNotifierProvider<ClockViewModel>(
       create: (_) => ClockViewModel(
           prayerTimes:  PrayerTimes.init(),
-          hijriDate: const HijriDate(hDate: ''),
           annoList: {},
       ),
       child: this,
@@ -44,16 +43,20 @@ class MosqueScreen extends StatefulWidget implements AutoRouteWrapper {
   }
 }
 
-class MosqueScreenState extends State<MosqueScreen> with AutoRouteAwareStateMixin<MosqueScreen>{
+class MosquePageState extends State<MosquePage> with AutoRouteAwareStateMixin<MosquePage>{
   Timer? _timer, _timerPrayerTimes, _timerToggleLanguage;
   final translator = GoogleTranslator();
+
+  static const MethodChannel _channel = MethodChannel('mosque.tv/flutter_hdmi_cec');
 
   @override
   void initState() {
     super.initState();
 
     debugPrint('initState');
-    fetchData();
+
+    /// Enable wake lock
+    Wakelock.enable();
   }
 
   @override
@@ -75,6 +78,11 @@ class MosqueScreenState extends State<MosqueScreen> with AutoRouteAwareStateMixi
     super.didPushNext();
 
     debugPrint('didPushNext');
+
+    // stop timers
+    _timer?.cancel();
+    _timerPrayerTimes?.cancel();
+    _timerToggleLanguage?.cancel();
   }
 
   @override
@@ -90,11 +98,10 @@ class MosqueScreenState extends State<MosqueScreen> with AutoRouteAwareStateMixi
 
     debugPrint('didPopNext');
 
-    _timer?.cancel();
-    _timerPrayerTimes?.cancel();
-    _timerToggleLanguage?.cancel();
-    fetchData();
-
+    /// Fetch data
+    /// and
+    /// start timers
+    initData();
   }
 
   @override
@@ -107,28 +114,35 @@ class MosqueScreenState extends State<MosqueScreen> with AutoRouteAwareStateMixi
     super.dispose();
   }
 
-  fetchData() async {
+  /// Fetch data
+  /// and
+  /// start timers
+  initData() {
+    _timer?.cancel();
+    _timerPrayerTimes?.cancel();
+    _timerToggleLanguage?.cancel();
+
     final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-    if(settingsProvider.settings.directusApi.isEmpty){
-      context.navigateTo(const SettingsPage());
-      return;
-    }
     final clockProvider = Provider.of<ClockViewModel>(context, listen: false);
 
-    final languageTimer = settingsProvider.settings.languageToggleTimer;
-
-    /// fetch prayer times once a day
-    /// update ui
-    clockProvider.updatePrayerTimes();
+    /// Update prayer times
+    clockProvider.updatePrayerTimes(
+        calcMethod: settingsProvider.settings.calculationMethod,
+        location: settingsProvider.settings.location
+    );
 
     /// fetch announcements
-    /// fetch IGMG once a day
-    /// update carousel widget
-    clockProvider.updateAnnouncements()
-        .then((_) => clockProvider.updateCalendarInfo());
+    if(settingsProvider.settings.directus){
+      clockProvider.updateAnnouncements().catchError((e)=>debugPrint(e.toString()));
+    }
 
-    /// start timer
-    /// update clock widget
+    /// Fetch calendar info from IGMG
+    if(settingsProvider.settings.igmg){
+      clockProvider.updateCalendarInfo().catchError((e)=>debugPrint(e.toString()));
+    }
+
+    /// Timer of clock widget
+    /// each 1 second
     /// update prayer times ends in widget
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       final clockModel = Provider.of<ClockViewModel>(context, listen: false);
@@ -137,21 +151,50 @@ class MosqueScreenState extends State<MosqueScreen> with AutoRouteAwareStateMixi
       clockModel.updateClock();
     });
 
-    /// start timer of prayer times update
-    _timerPrayerTimes = Timer.periodic(const Duration(minutes: 1), (timer) async {
-      final clockModel = Provider.of<ClockViewModel?>(context, listen: false);
+    /// Timer of prayer times update
+    /// each 1 minute
+    _timerPrayerTimes = Timer.periodic(const Duration(seconds: 60), (timer) async {
+      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+      final clockProvider = Provider.of<ClockViewModel>(context, listen: false);
 
-      /// try to update prayer times
-      clockModel?.updatePrayerTimes();
+      /// Turn TV off after 60 min.
+      if(clockProvider.prayerTimes.isISHAA()){
+        int timeLeft = clockProvider.prayerTimes.currPrayerTimeEndsIn().inMinutes;
+        int timeRange = clockProvider.prayerTimes.currPrayerTimeLength().inMinutes;
+        if(timeRange - timeLeft > 60){
+          /// Disable wake lock
+          Wakelock.disable();
+          //debugPrint('PlatformVer: ${await _channel.invokeMethod('getPlatformVersion')}');
+        }
+      }
+
+      /// Update prayer times
+      clockProvider.updatePrayerTimes(
+          calcMethod: settingsProvider.settings.calculationMethod,
+          location: settingsProvider.settings.location
+      );
+
+      /// fetch announcements
+      if(settingsProvider.settings.directus){
+        clockProvider.updateAnnouncements().catchError((e)=>debugPrint(e.toString()));
+      }
+
+      /// Fetch calendar info from IGMG
+      if(settingsProvider.settings.igmg){
+        clockProvider.updateCalendarInfo().catchError((e)=>debugPrint(e.toString()));
+      }
     });
 
     /// toggle language
     /// each x seconds
-    _timerToggleLanguage = Timer.periodic(Duration(seconds: languageTimer), (timer) => _toggleLanguage());
+    final languageTimer = settingsProvider.settings.languageToggleTimer;
+    if(languageTimer != 0){
+      _timerToggleLanguage = Timer.periodic(Duration(seconds: languageTimer), (timer) => _toggleLanguage());
+    }
   }
 
   /// toggles Language
-  _toggleLanguage() {
+  _toggleLanguage() async {
     late String newLocale;
     switch (context.locale.toString()) {
       case 'de':
@@ -167,19 +210,15 @@ class MosqueScreenState extends State<MosqueScreen> with AutoRouteAwareStateMixi
         newLocale = 'de';
         break;
     }
-
-    final clockModel = Provider.of<ClockViewModel?>(context, listen: false);
-
-    /// update model
-    clockModel?.updateAnnouncements()
-        .then((_) => clockModel.updateCalendarInfo())
-        .then((_) async {
-          await context.setLocale(Locale(newLocale));
-        });
+    await context.setLocale(Locale(newLocale));
   }
 
   @override
   Widget build(BuildContext context) {
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      initData();
+    });
 
     return SafeArea(
       child: Directionality(

@@ -146,7 +146,7 @@ class _AnnoCardState extends State<AnnoCard> {
     return Card(
       margin: const EdgeInsets.only(top: 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      color: Colors.white70,
+      color: Colors.white,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: annoWidget,
     );

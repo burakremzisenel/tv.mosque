@@ -2,31 +2,28 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:translator/translator.dart';
+import 'package:tv_mosque/Model/location.dart';
 import '../../Service/http/http_service.dart';
 import '../../Model/announcement.dart';
 import '../../Model/calendar_info.dart';
-import '../../Model/hijri_months.dart';
 import '../../Model/prayer_times.dart';
+import 'package:adhan/adhan.dart' as adhan;
 
 class ClockViewModel extends ChangeNotifier {
   ClockViewModel({
     required this.prayerTimes,
-    required this.hijriDate,
     required this.annoList,
     this.appbarVisible = false,
   }):
         now = DateTime.now();
 
   bool appbarVisible;
-  DateTime? lastUpdateAt_PT;
 
-  HijriDate hijriDate;
   PrayerTimes prayerTimes;
   int? currPrayerTimeType;
   DateTime now;
 
-  DateTime? lastUpdateAt_AN;
-  Map<String, Announcement> annoList;
+  final Map<String, Announcement> annoList;
   CalendarInfo? calendarInfo;
 
   toggleAppBarVisibility(){
@@ -36,45 +33,35 @@ class ClockViewModel extends ChangeNotifier {
 
   updateClock(){
     now = DateTime.now();
-
-    if(prayerTimes.cityName.isNotEmpty
-        && prayerTimes.getCurrPrayerTime().value != currPrayerTimeType){
-      currPrayerTimeType = prayerTimes.getCurrPrayerTime().value;
-
-      debugPrint('PTIME CHANGED');
-    }
-
     notifyListeners();
   }
 
-  Future updatePrayerTimes() async{
-    bool isUpToDate = true;
-
-    if(lastUpdateAt_PT == null){
-      isUpToDate = false;
+  Future updatePrayerTimes({
+    required adhan.CalculationMethod calcMethod,
+    Location? location,
+  }) async{
+    if( calcMethod == adhan.CalculationMethod.other){
+      /// IGMG
+      HttpService().fetchPrayerTimes(
+          DateTime.now(),
+          locale: location?.city ??'de',
+          cityID: location?.id ??20015
+      ).then((value) {
+        prayerTimes = value;
+        notifyListeners();
+      }).catchError((e){
+        /// Fallback
+        /// Diyanet
+        if(location != null){
+          prayerTimes = PrayerTimes.calculate(location: location, method: calcMethod);
+          notifyListeners();
+        }
+      });
 
     } else {
-      if (!DateUtils.isSameDay(lastUpdateAt_PT, DateTime.now())){
-        isUpToDate = false;
-      }
-    }
-
-    if (!isUpToDate){
-      /// fetch prayer times
-      PrayerTimes? pTimes = await HttpService().fetchPrayerTimes(DateTime.now());
-      if(pTimes != null){
-        lastUpdateAt_PT = DateTime.now();
-
-        /// update
-        prayerTimes = pTimes;
-
-        /// fetch hijri year
-        String? hijriYear = await HttpService().fetchHijriYear();
-        /// update
-        hijriDate = HijriDate(hDate: hijriYear ?? '');
-        /// update
-        prayerTimes.hijriDate = hijriDate;
-
+      /// Diyanet
+      if(location != null){
+        prayerTimes = PrayerTimes.calculate(location: location, method: calcMethod);
         notifyListeners();
       }
     }
@@ -96,42 +83,38 @@ class ClockViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+  Map<String, Announcement> get annos{
+    return Map<String, Announcement>.from(annoList);
+  }
 
   /// fetch data from IGMG
   Future updateCalendarInfo() async {
-    bool isUpToDate = true;
+    /// fetch calendar info
+    final info = await HttpService().fetchCalendarInfo(DateTime.now());
+    if(info != null){
 
-    if(lastUpdateAt_AN == null){
-      isUpToDate = false;
+      /// translate calendar event & topic
+      //calendarInfo = await translateCalendarInfo(info);
+      calendarInfo = info;
 
-    } else {
-      if (!DateUtils.isSameDay(lastUpdateAt_AN, DateTime.now())){
-        isUpToDate = false;
-      }
+      /// remove all calendar data
+      annoList.removeWhere((key, value) => (['today_ayah_or_hadit', 'today_in_history', 'topic']).contains(key));
+
+      /// Adds ayah or hadit
+      annoList.putIfAbsent('today_ayah_or_hadit', () =>
+      const Announcement(id: 0, title: 'today_ayah_or_hadit', body: '', type: AnnoTypes.IGMG)
+      );
+      /// Adds today in history
+      annoList.putIfAbsent('today_in_history', () =>
+      const Announcement(id: 0, title: 'today_in_history', body: '', type: AnnoTypes.IGMG)
+      );
+      /// Adds topic
+      annoList.putIfAbsent('topic', () =>
+      const Announcement(id: 0, title: 'topic', body: '', type: AnnoTypes.IGMG)
+      );
+
+      notifyListeners();
     }
-
-    if (!isUpToDate){
-      /// fetch calendar info
-      await HttpService().fetchCalendarInfo(DateTime.now())
-          .then((info) async {
-            if(info != null){
-              lastUpdateAt_AN = DateTime.now();
-
-              /// translate calendar event & topic
-              calendarInfo = await translateCalendarInfo(info);
-
-              notifyListeners();
-            }
-      }).catchError((e){
-        debugPrint(e.toString());
-      });
-
-    } else {
-      // get from buffer
-      //calendarInfo = CalendarInfo.fromJson(await readFromBuffer(BufferTypes.calInfo));
-    }
-
-    //notifyListeners();
   }
 
   /// translates calendar info

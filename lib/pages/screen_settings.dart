@@ -1,29 +1,36 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/carbon.dart';
 import 'package:iconify_flutter/icons/icon_park_solid.dart';
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:tv_mosque/pages/screen_settings_api.dart';
+import 'package:tv_mosque/router.gr.dart';
 import 'dart:ui' as ui;
-import 'package:tv_mosque/pages/screen_settings_language.dart';
-import 'package:tv_mosque/pages/screen_settings_slider.dart';
 
 import '../Logic/Provider/provider_settings.dart';
+import 'package:iconify_flutter/icons/fa_solid.dart';
+import 'package:badges/badges.dart' as badges;
 
 @RoutePage()
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  State<SettingsPage> createState() => SettingsPageState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class SettingsPageState extends State<SettingsPage> {
+  @override
+  void initState() {
+    super.initState();
+
+
+  }
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -71,54 +78,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       /// Language settings
                       SettingsTile.navigation(
                         leading: const Icon(Icons.language),
-                        title: Text('language'.tr()),
+                        trailing: badges.Badge(
+                          showBadge: provider.settings.location == null,
+                          position: badges.BadgePosition.topEnd(top: 2, end: 2),
+                          child: IconButton(
+                            focusColor: Colors.grey.shade300,
+                            icon: const Icon(Icons.chevron_right_rounded),
+                            onPressed: (){
+                              context.pushRoute(const LanguageSettingsRoute());
+                            },
+                          ),
+                        ),
+                        title: Text('Land & Sprache'),
                         value: Text(context.locale.languageCode.toUpperCase()),
                         description: Text('language_settings_subtitle'.tr()),
-                        onPressed: (context){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LanguageSettingsScreen()),
-                          );
-                        },
                       ),
 
                       /// Announcement settings
                       SettingsTile.navigation(
                         leading: const Icon(Icons.chrome_reader_mode_outlined),
+                        trailing: IconButton(
+                          focusColor: Colors.grey.shade300,
+                          icon: const Icon(Icons.chevron_right_rounded),
+                          onPressed: (){
+                            context.pushRoute(const SliderSettingsRoute());
+                          },
+                        ),
                         title: Text('announcements'.tr()),
                         description: Text('slider_duration'.tr()),
-                        onPressed: (context){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const SliderSettingsScreen()),
-                          );
-                        },
                       ),
 
                       /// API settings
                       SettingsTile.navigation(
                         leading: const Iconify(IconParkSolid.api, color: Colors.grey,),
+                        trailing: badges.Badge(
+                          showBadge: provider.settings.directusKey.isEmpty || provider.settings.directusApi.isEmpty,
+                          position: badges.BadgePosition.topEnd(top: 2, end: 2),
+                          child: IconButton(
+                            focusColor: Colors.grey.shade300,
+                            icon: const Icon(Icons.chevron_right_rounded),
+                            onPressed: (){
+                              context.pushRoute(const ApiSettingsRoute());
+                            },
+                          ),
+                        ),
                         title: Text('api_endpoints'.tr()),
                         description: const Text('Directus, IGMG'),
-                        onPressed: (context){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const ApiSettingsScreen()),
-                          );
-                        },
                       ),
 
                       /// Show licenses
                       SettingsTile.navigation(
                         leading: const Iconify(Carbon.license_third_party, color: Colors.grey),
-                        title: const Text('Licence'),
-                        description: const Text('License information'),
-                        onPressed: (context){
-                          showLicensePage(
+                        trailing: IconButton(
+                          focusColor: Colors.grey.shade300,
+                          icon: const Icon(Icons.chevron_right_rounded),
+                          onPressed: (){
+                            showLicensePage(
                               context: context,
                               applicationName: 'app_name'.tr(),
-                          );
-                        },
+                            );
+                          },
+                        ),
+                        title: const Text('Licence'),
+                        description: const Text('License information'),
                       ),
                     ],
                   ),

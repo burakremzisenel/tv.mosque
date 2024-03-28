@@ -1,11 +1,11 @@
-import 'dart:convert';
-import 'dart:ffi';
 
-import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
+import 'package:tv_mosque/Model/location.dart';
 
 import '../helper/date_time_tools.dart';
-import 'hijri_months.dart';
+import 'package:adhan/adhan.dart' as adhan;
+
+import '../helper/tools.dart';
 
 /*
 
@@ -64,7 +64,6 @@ enum PrayerTimeType{
 class PrayerTimes{
   String cityName;
   DateTime date;
-  HijriDate? hijriDate;
   String fajr;
   String shuruq;
   String dhuhr;
@@ -75,7 +74,6 @@ class PrayerTimes{
   PrayerTimes({
     required this.cityName,
     required this.date,
-    this.hijriDate,
     required this.fajr,
     required this.shuruq,
     required this.dhuhr,
@@ -94,6 +92,27 @@ class PrayerTimes{
         asr: '00:00',
         maghrib: '00:00',
         ishaa: '00:00'
+    );
+  }
+
+  factory PrayerTimes.calculate({
+    required Location location,
+    required adhan.CalculationMethod method
+  }){
+    final myCoordinates = adhan.Coordinates(location.latitude, location.longitude);
+    final params = method.getParameters();
+    params.madhab = adhan.Madhab.shafi;
+    final adhanTimes = adhan.PrayerTimes.today(myCoordinates, params);
+    DateTime now = DateTime.now();
+    return PrayerTimes(
+      cityName: location.name,
+      date: DateTime(now.year, now.month, now.day),
+      fajr: parseDateJM(adhanTimes.fajr),
+      shuruq: parseDateJM(adhanTimes.sunrise),
+      dhuhr:parseDateJM(adhanTimes.dhuhr),
+      asr: parseDateJM(adhanTimes.asr),
+      maghrib: parseDateJM(adhanTimes.maghrib),
+      ishaa: parseDateJM(adhanTimes.isha),
     );
   }
 
@@ -163,9 +182,17 @@ class PrayerTimes{
   }
 
   Duration currPrayerTimeEndsIn() {
-    if(cityName.isEmpty) return const Duration(seconds: 60);
+    if(cityName.isEmpty) return const Duration(seconds: 600);
     int nextPrayerTimeInSeconds = nextPrayerTimeAsDuration().inSeconds;
     int diff = nextPrayerTimeInSeconds - currTimeToDuration().inSeconds;
+    if ( diff < 0 ) diff += 24*60*60;
+    return Duration(seconds: diff);
+  }
+
+  Duration currPrayerTimeLength() {
+    if(cityName.isEmpty) return const Duration(seconds: 600);
+    int nextPrayerTimeInSeconds = nextPrayerTimeAsDuration().inSeconds;
+    int diff = nextPrayerTimeInSeconds - currPrayerTimeAsDuration().inSeconds;
     if ( diff < 0 ) diff += 24*60*60;
     return Duration(seconds: diff);
   }
@@ -226,7 +253,6 @@ class PrayerTimes{
   factory PrayerTimes.fromBuffer(Map<String, dynamic> json) => PrayerTimes(
       cityName: json["cityName"],
       date: DateTime.parse(json["date"]).toLocal(),
-      hijriDate: HijriDate.fromBuffer(json["hijriDate"]),
       fajr: json["fajr"],
       shuruq: json["sunrise"],
       dhuhr: json["dhuhr"],
@@ -238,7 +264,6 @@ class PrayerTimes{
   Map<String, dynamic> toJson() => {
     "cityName": cityName,
     "date": date.toUtc().toIso8601String(),
-    "hijriDate": hijriDate?.toJson(),
     "fajr": fajr,
     "sunrise": shuruq,
     "dhuhr": dhuhr,

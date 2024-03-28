@@ -34,10 +34,10 @@ class ApplicationToolbar extends StatelessWidget implements PreferredSizeWidget{
                   PopupMenuItem(
                     value:1,
                     onTap: (){
-                      Navigator.push(
+      /*                Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const SettingsScreen()),
-                      );
+                      );*/
                     },
                     child: const Directionality(
                       textDirection: TextDirection.ltr,

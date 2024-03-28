@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:adhan/adhan.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tv_mosque/Model/location.dart';
 import 'package:tv_mosque/Model/settings.dart';
 
 import '../../helper/shared_prefs.dart';
@@ -16,12 +18,45 @@ class SettingsProvider extends ChangeNotifier{
         languageToggleTimer = settings.languageToggleTimer,
         pageSlideTimer = settings.pageSlideTimer;
 
-  updateEndpoints(String iApi, String iKey, String dApi, String dKey) async {
+  updateLocation(Location location) async {
+    settings.location = location;
+    await saveToBuffer(BufferTypes.settings, settings.toJson());
+    notifyListeners();
+  }
+  updateEndpoints({
+    required String iApi,
+    required String iKey,
+    required String dApi,
+    required String dKey
+  }) async {
+
     settings.igmgApi = iApi;
     settings.igmgApiKey = iKey;
     settings.directusApi = dApi;
     settings.directusKey = dKey;
     await saveToBuffer(BufferTypes.settings, settings.toJson());
+  }
+
+  updatePayerTimesCalcMethod({required CalculationMethod method}) async {
+    settings.calculationMethod = method;
+    await saveToBuffer(BufferTypes.settings, settings.toJson());
+    notifyListeners();
+  }
+
+  updateApiConnectionIGMG({
+    required bool igmgAnno,
+  }) async {
+    settings.igmg = igmgAnno;
+    await saveToBuffer(BufferTypes.settings, settings.toJson());
+    notifyListeners();
+  }
+
+  updateApiConnectionDirectus({
+    required bool directusAnno
+  }) async {
+    settings.directus = directusAnno;
+    await saveToBuffer(BufferTypes.settings, settings.toJson());
+    notifyListeners();
   }
 
   toggleOrientation() async {

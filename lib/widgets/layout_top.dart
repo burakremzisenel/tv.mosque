@@ -1,11 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:provider/provider.dart';
-import '../Model/hijri_months.dart';
+import 'package:tuple/tuple.dart';
+import 'package:tv_mosque/router.gr.dart';
 import '../Model/prayer_times.dart';
 import '../Logic/Provider/provider_clock.dart';
-import '../pages/screen_settings.dart';
 
 class LayoutTop extends StatelessWidget {
   const LayoutTop({super.key});
@@ -14,23 +16,25 @@ class LayoutTop extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
         children: [
+
+          /// Next prayer time countdown
           Expanded(
               flex: 1,
-              child: Selector<ClockViewModel, DateTime>(
-                  selector: (_, provider) => provider.now,
-                  builder: (context, now, child) {
+              child: Selector<ClockViewModel, Tuple2<DateTime, PrayerTimes>>(
+                  selector: (_, provider) => Tuple2(provider.now, provider.prayerTimes),
+                  builder: (context, tuple, child) {
 
                     /// Get provider
-                    PrayerTimes pTime = Provider.of<ClockViewModel>(context, listen: false).prayerTimes;
+                    final pTime = tuple.item2;
                     String pTimeEndsIn = pTime.prayerTimesEndsIn(wSeconds: true);
 
                     return InkWell(
                       focusColor: Colors.transparent,
                       onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SettingsScreen()),
-                        );
+                        /// Navigate to settings page
+                        context.setLocale(const Locale('de'))
+                            .then((_) => context.pushRoute(const SettingsRoute()));
+                        //context.pushRoute(const SettingsRoute());
                       },
                       child: Focus(
                         child: Builder(
@@ -100,25 +104,6 @@ class LayoutTop extends StatelessWidget {
                                       )
                                     ),
                                   ),
-
-                                  /// Icon
-                                  const Expanded(
-                                    flex: 2,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        FittedBox(child: Icon(Icons.timer_outlined, color: Colors.deepOrangeAccent, size: 20)),
-                                        FittedBox(
-                                          child: AutoSizeText(
-                                            'hh:mm:ss',
-                                            style: TextStyle(fontSize: 10, color: Colors.white),
-                                            maxLines: 1,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
                                 ],
                               ),
                             );
@@ -133,74 +118,63 @@ class LayoutTop extends StatelessWidget {
           /// Date & Time
           Expanded(
             flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                /// Row 1
-                /// local date
-                Expanded(
-                  flex: 2,
-                  child: AutoSizeText(
-                    DateFormat('EEE, dd.MMM yyyy', context.locale.toString()).format(DateTime.now()),
-                    style: const TextStyle(
-                        fontSize: 28,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold
+            child: Selector<ClockViewModel, DateTime>(
+                selector: (_, provider) => provider.now,
+              builder: (context, now, child) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    /// Row 1
+                    /// local date
+                    Expanded(
+                      flex: 2,
+                      child: AutoSizeText(
+                        DateFormat('EEE, dd.MMM yyyy', context.locale.toString()).format(now),
+                        style: const TextStyle(
+                            fontSize: 28,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                  ),
-                ),
 
-                /// Row2
-                /// hijri date
-                Selector<ClockViewModel, HijriDate>(
-                    selector: (_, provider) => provider.hijriDate,
-                    builder: (context, hijriDate, child) {
-                      return Expanded(
-                        flex: 3,
-                        child: AutoSizeText.rich(
-                          TextSpan(
-                              children: <TextSpan>[
-                                for (String dateChunk in hijriDate.convert() ?? [])
-                                  TextSpan(text: ' $dateChunk')
-                              ]
-                          ),
-                          style: const TextStyle(
-                              fontSize: 30,
-                              color: Colors.lime,
-                              fontWeight: FontWeight.bold
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                    /// Row2
+                    /// hijri date
+                    Expanded(
+                      flex: 3,
+                      child: AutoSizeText(
+                        HijriCalendar.now().toFormat("MMMM dd yyyy"),
+                        style: const TextStyle(
+                            fontSize: 30,
+                            color: Colors.lime,
+                            fontWeight: FontWeight.bold
                         ),
-                      );
-                    }
-                ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                      ),
+                    ),
 
-                /// Row3
-                /// Digital clock
-                Selector<ClockViewModel, DateTime>(
-                    selector: (_, provider) => provider.now,
-                    builder: (context, now, child) {
-                      return Expanded(
-                        flex: 5,
-                        child: AutoSizeText(
-                          DateFormat('HH:mm', context.locale.toString()).format(now),
-                          style: const TextStyle(
-                              fontSize: 34,
-                              color: Colors.lime,
-                              fontWeight: FontWeight.bold
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
+                    /// Row3
+                    /// Digital clock
+                    Expanded(
+                      flex: 5,
+                      child: AutoSizeText(
+                        DateFormat('HH:mm', context.locale.toString()).format(now),
+                        style: const TextStyle(
+                            fontSize: 34,
+                            color: Colors.lime,
+                            fontWeight: FontWeight.bold
                         ),
-                      );
-                    }
-                ),
-              ],
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                );
+              }
             ),
           ),
 
